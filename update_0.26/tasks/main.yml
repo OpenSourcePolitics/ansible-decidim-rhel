@@ -1,0 +1,7 @@
+---
+# tasks file for decidim_rhel_8
+- import_tasks: ruby.yml
+- import_tasks: nodejs.yml
+- import_tasks: yarn.yml
+- import_tasks: decidim.yml
+- import_tasks: post_installation.yml

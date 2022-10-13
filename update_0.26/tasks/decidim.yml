@@ -35,18 +35,6 @@
     chdir: "{{ decidim_app_directory }}"
     executable: "{{ decidim_deployment_path }}/.rbenv/versions/{{ ruby_version_result.stdout }}/bin/bundle"
 
-- name: Decidim | Create .env file
-  shell:
-    cmd: touch .env
-    chdir: "{{ decidim_app_directory }}"
-
-- name: Decidim | Init variables in .env file
-  template:
-    src: templates/env.j2
-    dest: "{{ decidim_app_directory }}/.env"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-
 - name: Decidim | Yarn install
   shell:
     cmd: "yarn"

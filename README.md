@@ -1,4 +1,4 @@
-# Procédure a suivre
+# Playbook Ansible pour Decidim sur RHEL 8
 
 
 ## Pré-requis
@@ -28,6 +28,10 @@
             database_username:
             database_password:
             secret_key_base:
+            decidim_deployment_path: 
+            ssl_certificate_path: 
+            ssl_certificate_key_path: 
+            decidim_admin_email: 
         ```
 
 ## Variables
@@ -48,8 +52,9 @@
 - **decidim_deployment_path** : Chemin d'installation pour l'environnement Ruby on Rails et la stack Decidim
 - **ssl_certificate_path** : Chemin vers le certificat SSL pour la configuration Nginx
 - **ssl_certificate_key_path** : Chemin vers la clé du certificat SSL pour la configuration Nginx
+- **decidim_admin_email** : addresse email d'un administrateur de la plateforme, **il doit exister sur chacune des organisations existantes** 
 
-## Lancer le playbook
+## Lancer le playbook d'installation
 
 Une fois les pré-requis en place, lancer la commande suivante depuis de le répertoire Ansible pour lancer le déploiement du role Ansible sur le serveur à provisionner
 ```

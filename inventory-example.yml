@@ -16,3 +16,4 @@ all:
         decidim_deployment_path: "/home/{{ ansible_user }}"
         ssl_certificate_path: "/home/{{ ansible_user }}/ssl/fullchain.pem"
         ssl_certificate_key_path: "/home/{{ ansible_user }}/ssl/privkey.pem" 
+        decidim_admin_email: "admin@email.com"
