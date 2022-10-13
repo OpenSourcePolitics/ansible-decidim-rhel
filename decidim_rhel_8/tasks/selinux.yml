@@ -1,0 +1,13 @@
+- name: SELinux | Disable SELinux
+  selinux:
+    policy: targeted
+    state: disabled
+  become: true
+  register: conf_selinux_update_result
+
+
+- name: SELinux | Reboot server
+  reboot:
+    reboot_timeout: 600
+  become: true
+  when: conf_selinux_update_result.changed == true

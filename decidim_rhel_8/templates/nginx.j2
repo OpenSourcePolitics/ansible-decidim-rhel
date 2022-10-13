@@ -1,0 +1,25 @@
+server {
+
+    server_name {{ decidim_host }};
+
+    client_max_body_size 32M;
+
+    passenger_enabled on;
+
+    rails_env    production;
+    root         {{ decidim_app_directory }}/public;
+
+    listen 443 ssl;
+    ssl_certificate {{ ssl_certificate_path }};
+    ssl_certificate_key {{ ssl_certificate_key_path }};
+
+}
+
+server {
+    
+    server_name {{ decidim_host }};
+    listen 80;
+
+    return 301 https://$host$request_uri;
+
+}

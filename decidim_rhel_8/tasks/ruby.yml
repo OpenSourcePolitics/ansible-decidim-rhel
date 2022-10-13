@@ -1,0 +1,14 @@
+- name: Ruby | Clone ruby-build repo
+  ansible.builtin.git:
+    repo: "https://github.com/rbenv/ruby-build.git"
+    dest: "{{ decidim_deployment_path }}/.rbenv/plugins/ruby-build"
+
+- name: Ruby | Set ruby-build config
+  lineinfile:
+    path: "{{ decidim_deployment_path }}/.bashrc"
+    line: export PATH="{{ decidim_deployment_path }}/.rbenv/plugins/ruby-build/bin:$PATH"
+    state: present
+
+- name: Ruby | Source .bashrc
+  shell: 
+    cmd: . {{ decidim_deployment_path }}/.bashrc

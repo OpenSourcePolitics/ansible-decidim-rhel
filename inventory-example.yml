@@ -1,0 +1,18 @@
+all:
+  hosts:
+    decidim-rhel8: 
+        ansible_host: 10.10.10.10
+        git_organization: "OpenSourcePolitics"
+        git_root: "https://github.com"
+        git_repository: "decidim-app" 
+        repository_branch: "master" 
+        decidim_host: "decidim-rhel.osp.dev"
+        database_host: "20.20.20.20"
+        database_port: "1234"
+        database_name: "decidim_rhel8"
+        database_username: "decidim"
+        database_password: "secret_password"
+        secret_key_base: "decidim_secret_key_base"
+        decidim_deployment_path: "/home/{{ ansible_user }}"
+        ssl_certificate_path: "/home/{{ ansible_user }}/ssl/fullchain.pem"
+        ssl_certificate_key_path: "/home/{{ ansible_user }}/ssl/privkey.pem" 

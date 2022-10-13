@@ -1,0 +1,8 @@
+- name: Yarn | Download and install yarn with shell script
+  shell:
+    cmd: curl -o- -L https://yarnpkg.com/install.sh | bash
+  become: true
+
+- name: Yarn | Source .bashrc
+  shell: 
+    cmd: . {{ decidim_deployment_path }}/.bashrc

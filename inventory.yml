@@ -1,0 +1,19 @@
+all:
+  hosts:
+    decidim-server:
+        ansible_host:
+        git_organization:
+        git_root:
+        git_repository:
+        repository_branch:
+        decidim_host:
+        certbot_email_address:
+        database_host:
+        database_port:
+        database_name:
+        database_username:
+        database_password:
+        secret_key_base:
+        decidim_deployment_path: 
+        ssl_certificate_path: 
+        ssl_certificate_key_path: 
