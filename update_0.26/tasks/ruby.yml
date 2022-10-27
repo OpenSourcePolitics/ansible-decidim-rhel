@@ -5,10 +5,10 @@
 
 - name: Ruby | Set ruby-build config
   lineinfile:
-    path: "{{ decidim_deployment_path }}/.bashrc"
+    path: "{{ decidim_home_path }}/.bashrc"
     line: export PATH="{{ decidim_deployment_path }}/.rbenv/plugins/ruby-build/bin:$PATH"
     state: present
 
 - name: Ruby | Source .bashrc
   shell: 
-    cmd: . {{ decidim_deployment_path }}/.bashrc
+    cmd: . {{ decidim_home_path }}/.bashrc
