@@ -15,6 +15,7 @@ all:
         database_password:
         secret_key_base:
         decidim_deployment_path: 
+        decidim_home_path:
         ssl_certificate_path: 
         ssl_certificate_key_path: 
         decidim_admin_email: 
