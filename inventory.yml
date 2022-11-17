@@ -5,6 +5,7 @@ all:
         git_organization:
         git_root:
         git_repository:
+        app_repository:
         repository_branch:
         decidim_host:
         certbot_email_address:

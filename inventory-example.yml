@@ -5,6 +5,7 @@ all:
         git_organization: "OpenSourcePolitics"
         git_root: "https://github.com"
         git_repository: "decidim-app" 
+        app_repository: "decidim-app"
         repository_branch: "master" 
         decidim_host: "decidim-rhel.osp.dev"
         database_host: "20.20.20.20"
