@@ -1,7 +1,47 @@
 # Playbook Ansible pour Decidim sur RHEL 8
 
+## Variables d'inventaire ansible
+*Se référer au fichier **inventory-example.yml** pour les exemples*
 
-## Pré-requis
+- **ansible_host** : Adresse IP du serveur à provisionner
+- **git_organization** : Le nom de l'organisation Git (exemple : `OpenSourcePolitics`)
+- **git_root** : URL racine du serveur Git (exemple : https://github.com)
+- **git_repository** : Nom du dépot Decidim hébergé sur Git (exemple : `decidim-app`)
+- **repository_branch** : Branche git du dépot à déployer (par défaut : `master`)
+- **decidim_host** : sous-domaine d'accès à la plateforme Decidim (exemple : `decidim-rhel8.osp.dev`)
+- **database_host** : Adresse IP du serveur hébergeant la base de données (vide par défaut pour un accès local)
+- **database_port** : Port permettant d'accéder à la base de données (`5432` par défaut)
+- **database_name** : Nom de la base de donnée Decidim (par défaut : `osp_app`)
+- **database_username** : Utilisateur ayant les acces à la base de donnée (vide par défaut pour un accès local avec l'utilisateur courant)
+- **database_password** : Mot de passe de l'utilisateur avec acces à la base de donnée (vide par défaut)
+- **secret_key_base:** : La secret key base utilisée avec l'archive de données PostgreSQL importée
+- **decidim_deployment_path** : Chemin d'installation pour l'environnement Ruby on Rails et la stack Decidim
+- **ssl_certificate_path** : Chemin vers le certificat SSL pour la configuration Nginx
+- **ssl_certificate_key_path** : Chemin vers la clé du certificat SSL pour la configuration Nginx
+- **decidim_admin_email** : addresse email d'un administrateur de la plateforme, **il doit exister sur chacune des organisations existantes** 
+
+## Usage
+
+```
+ansible-playbook -u sudoer --private-key="~/path/to/ssh-key" -i inventory.yml playbook.yml
+```
+où : 
+- _sudoer_ est l'utilisateur distant qui executera le contenu du playbook
+- _~/path/to/ssh-key_ est le chemin local de la clé SSH autorisée sur le serveur distant
+- _inventory.yml_ est vore fichier local d'inventaire
+- _playbook.yml_ est le playbook à exécuter
+
+## Playbook disponibles
+- playbook.yml : installation complête de Decidim sur un serveur RHEL8 
+- playbook-update-0.26.yml : mise à jour majeure d'un decidim existant (< 0.26)
+- playbook-bump-0.26.yml : mise à jour mineure d'un decidim existant (~ 0.26.x)
+- playbook-update-0.27.yml : mise à jour majeure d'un decidim existant (~ 0.26)
+- playbook-bump-0.27.yml : mise à jour mineure d'un decidim existant (~ 0.27.x)
+
+
+## Installation de Decidim avec import de données existante
+
+### Pré-requis
 - Avoir a disposition un serveur PostgreSQL avec :
     - Un utilisateur PostgreSQL avec password
     - Une base de donnée vide et donner les droits d'acces à l'utilisateur précedemment créé
@@ -34,34 +74,14 @@
             decidim_admin_email: 
         ```
 
-## Variables
-*Se référer au fichier **inventory-example.yml** pour les exemples*
-
-- **ansible_host** : Adresse IP du serveur à provisionner
-- **git_organization** : Le nom de l'organisation Git (exemple : `OpenSourcePolitics`)
-- **git_root** : URL racine du serveur Git (exemple : https://github.com)
-- **git_repository** : Nom du dépot Decidim hébergé sur Git (exemple : `decidim-app`)
-- **repository_branch** : Branche git du dépot à déployer (par défaut : `master`)
-- **decidim_host** : sous-domaine d'accès à la plateforme Decidim (exemple : `decidim-rhel8.osp.dev`)
-- **database_host** : Adresse IP du serveur hébergeant la base de données (vide par défaut pour un accès local)
-- **database_port** : Port permettant d'accéder à la base de données (`5432` par défaut)
-- **database_name** : Nom de la base de donnée Decidim (par défaut : `osp_app`)
-- **database_username** : Utilisateur ayant les acces à la base de donnée (vide par défaut pour un accès local avec l'utilisateur courant)
-- **database_password** : Mot de passe de l'utilisateur avec acces à la base de donnée (vide par défaut)
-- **secret_key_base:** : La secret key base utilisée avec l'archive de données PostgreSQL importée
-- **decidim_deployment_path** : Chemin d'installation pour l'environnement Ruby on Rails et la stack Decidim
-- **ssl_certificate_path** : Chemin vers le certificat SSL pour la configuration Nginx
-- **ssl_certificate_key_path** : Chemin vers la clé du certificat SSL pour la configuration Nginx
-- **decidim_admin_email** : addresse email d'un administrateur de la plateforme, **il doit exister sur chacune des organisations existantes** 
-
-## Lancer le playbook d'installation
+### Lancer le playbook d'installation
 
 Une fois les pré-requis en place, lancer la commande suivante depuis de le répertoire Ansible pour lancer le déploiement du role Ansible sur le serveur à provisionner
 ```
 ansible-playbook -u decidim --private-key="~/path/to/ssh-key" -i inventory.yml playbook.yml
 ```
 
-## Résultat attendu
+### Résultat attendu
 
 Apres exécution du playbook sur le serveur cible, celui-ci devrait avoir :
 
@@ -74,8 +94,8 @@ Apres exécution du playbook sur le serveur cible, celui-ci devrait avoir :
 - Installer la derniere version stable de Yarn
 - Compléter l'ensemble des étapes liées au bon fonctionnement de Decidim, à savoir : 
     - Téléchargement du dépot de code dans le répertoire créé à partir de la variable d'inventaire **git_repository**
-    - Installation de la version 2.7.1 de Ruby
-    - Installation de la version 2.2.29 de Bundler
+    - Installation de la version de Ruby correspondant à celle spécifiée par le dépot de code de la decidim-app
+    - Installation de la version de Bundler correspondant à celle spécifiée par le dépot de code de la decidim-app
     - Installation des gems liées à Decidim (présentes dans le fichier **Gemfile**)
     - Création d'un fichier **.env** contenant les variables d'environnement nécéssaires au bon fonctionnement de l'application et renseignées en amont dans le fichier **inventory.yml**
     - Installation des migrations Rails
@@ -87,7 +107,7 @@ Apres exécution du playbook sur le serveur cible, celui-ci devrait avoir :
 - Installer Redis
 - Installer Certbot avec création d'un certificat SSL Let's Encrypt pour le sous-domaine d'accès pour Decidim (variable d'inventaire **decidim_host**)
 
-## Finalisation
+### Finalisation
 
 Extraire l'archive des fichiers uploadés dans le dossier de l'application Decidim qui correspond à 
 ```

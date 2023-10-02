@@ -1,0 +1,13 @@
+- name: NGINX | Restart NGINX
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: nginx
+  become: true
+
+- name: Sidekiq | Restart sidekiq
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: sidekiq
+  become: true
