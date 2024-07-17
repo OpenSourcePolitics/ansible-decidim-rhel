@@ -8,7 +8,3 @@
     name: yarn
     state: latest
   become: true
-
-- name: Yarn | Source .bashrc
-  shell: 
-    cmd: . {{ decidim_deployment_path }}/.bashrc
