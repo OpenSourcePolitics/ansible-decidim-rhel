@@ -42,7 +42,7 @@
 
 - name: Decidim | Run migrations
   shell:
-    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails db:migrate:primary"
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails db:migrate"
     chdir: "{{ decidim_app_directory }}"
 
 - name: Decidim | Precompile assets
