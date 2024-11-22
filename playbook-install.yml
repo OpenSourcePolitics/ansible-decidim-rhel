@@ -1,0 +1,12 @@
+- hosts: all
+  gather_facts: true   
+
+  vars:
+    decidim_app_repository: "{{ git_root }}/{{ git_organization }}/{{ git_repository }}"
+    decidim_app_directory: "{{ decidim_deployment_path }}/{{ app_repository }}"
+    postgresql_version: "13"
+    postgresql_data_dir: "/var/lib/pgsql/data"
+    nodejs_version: "16"
+        
+  roles:
+    - install

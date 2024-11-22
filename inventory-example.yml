@@ -1,0 +1,25 @@
+all:
+  hosts:
+    decidim-server:
+        ansible_python_interpreter: /usr/bin/python3
+        ansible_host: 10.10.10.10
+        ansible_port: 22
+        git_organization: "OpenSourcePolitics"
+        git_root: "https://github.com"
+        git_repository: "decidim-app" 
+        app_repository: "decidim-app"
+        repository_branch: "master" 
+        decidim_host: "decidim-rhel9.osp.dev"
+        secret_key_base: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        database_name: "decidim"
+        geocoder_lookup_api_key: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        object_storage_access_key: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        object_storage_secret_key: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        object_storage_bucket_name: "decidim-bucket"
+        object_storage_endpoint_host: "decidim.storage.opensourcepolitics.eu"
+        default_locale: "en"
+        available_locales: "en,fr,ca,es"
+        decidim_home_path: "/data/{{ ansible_user }}"
+        decidim_deployment_path: "/home/{{ ansible_user }}"
+        decidim_admin_email: "admin@email.com"
+        postgres_restore_file_path: "/home/{{ ansible_user }}/decidim_rhel8.sql"

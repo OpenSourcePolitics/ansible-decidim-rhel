@@ -1,0 +1,43 @@
+- name: Decidim | Moderation - Remove from search
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:moderation:remove_from_search"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Update participatory process in comments
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rake decidim_comments:update_participatory_process_in_comments"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Orphans valuator assignments cleanup
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rake decidim:proposals:upgrade:remove_valuator_orphan_records"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Initiatives pages exception fix
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rake decidim:initiatives:upgrade:fix_broken_pages"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Categories description is deprecated
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails runner -e production 'Decidim::Category.pluck(:id, :name, :description).map { |row| puts row.join(\";\") }'"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Global search user by nickname
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails runner -e production 'Decidim::User.find_each { |u| puts \"Processing user #{u.id}\" ; u.try_update_index_for_search_resource }'"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: NGINX | Restart NGINX
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: nginx
+  become: true
+
+- name: Sidekiq | Restart sidekiq
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: sidekiq
+  become: true

@@ -1,0 +1,64 @@
+- name: "Postgres | Check if database exists"
+  shell: 
+    cmd: "psql -lqt | cut -d \\| -f 1 | grep -qw {{ database_name }}"
+  register: postgres_database_exists
+  ignore_errors: true
+
+- name: "Postgres | Create dump file name"
+  set_fact:
+    postgres_dump_file_path: "{{ decidim_home_path }}/ansible-postgres-dump-{{ ansible_date_time.iso8601_basic_short }}.sql"
+  when: postgres_database_exists.rc == 0
+  
+- name: "Postgres | A backup of your existing database will be created at {{ postgres_dump_file_path }}"
+  debug:
+    var: postgres_dump_file_path
+  when: postgres_database_exists.rc == 0
+
+- name: "Postgres | Dump existing database to a file"
+  postgresql_db:
+    name: "{{ database_name }}"
+    state: dump
+    target: "{{ postgres_dump_file_path }}"
+    login_user: "{{ ansible_user }}"
+  when: postgres_database_exists.rc == 0
+
+- name: "Postgres | Drop existing app database"
+  postgresql_db:
+    state: absent
+    name: "{{ database_name }}"
+  become: true
+  become_user: postgres
+  when: postgres_database_exists.rc == 0
+
+- name: "Postgres | Create app database"
+  postgresql_db:
+    state: present
+    name: "{{ database_name }}"
+    owner: "{{ ansible_user }}"
+  become: true
+  become_user: postgres
+
+- name: "Postgres | Install ltree extension"
+  postgresql_query:
+    db: "{{ database_name }}"
+    query: "create extension ltree;"
+  ignore_errors: true
+  become: true
+  become_user: postgres
+
+- name: "Postgres | Install pg_trgm extension"
+  postgresql_query:
+    db: "{{ database_name }}"
+    query: "create extension pg_trgm;"
+  ignore_errors: true
+  become: true
+  become_user: postgres
+
+- name: "Postgres | Restore app database"
+  postgresql_db:
+    state: restore
+    name: "{{ database_name }}"
+    target: "{{ postgres_restore_file_path }}"
+    owner: "{{ ansible_user }}"
+  become: true
+  become_user: postgres

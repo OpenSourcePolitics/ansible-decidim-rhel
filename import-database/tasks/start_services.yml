@@ -1,0 +1,11 @@
+- name: NGINX | Start NGINX service
+  systemd:
+    state: started
+    name: nginx
+  become: true
+
+- name: Sidekiq | Start sidekiq service
+  systemd:
+    state: started
+    name: sidekiq
+  become: true

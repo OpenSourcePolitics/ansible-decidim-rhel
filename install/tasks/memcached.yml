@@ -1,0 +1,15 @@
+- name: Memcached | Install packages
+  dnf:
+    name: 
+      - memcached
+      - libmemcached
+    enablerepo: crb
+    state: latest
+  become: true
+
+- name: Memcached | Enable and start service
+  ansible.builtin.systemd:
+    name: memcached
+    state: started
+    enabled: yes
+  become: true

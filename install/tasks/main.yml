@@ -1,0 +1,17 @@
+---
+# tasks file for decidim_rhel_8
+- import_tasks: dependencies.yml
+- import_tasks: selinux.yml
+- import_tasks: postgres.yml
+- import_tasks: memcached.yml
+- import_tasks: rbenv.yml
+- import_tasks: ruby.yml
+- import_tasks: nodejs.yml
+- import_tasks: yarn.yml
+- import_tasks: decidim.yml
+- import_tasks: logrotate.yml
+- import_tasks: nginx.yml
+- import_tasks: passenger.yml
+- import_tasks: certbot.yml
+- import_tasks: sidekiq.yml
+- import_tasks: redis.yml

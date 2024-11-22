@@ -1,0 +1,20 @@
+- name: NodeJS | Download NodeJS
+  shell:
+    cmd: curl -sL https://rpm.nodesource.com/setup_{{ nodejs_version }}.x | bash -
+  become: true
+
+- name: NodeJS | Enable SHA1 GPG signature
+  shell:
+    cmd: update-crypto-policies --set DEFAULT:SHA1
+  become: true
+
+- name: NodeJS | Install NodeJS
+  dnf:
+    name: nodejs
+    state: present
+  become: true
+
+- name: NodeJS | Disable SHA1 GPG signature
+  shell:
+    cmd: update-crypto-policies --set DEFAULT
+  become: true

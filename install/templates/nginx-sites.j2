@@ -1,0 +1,13 @@
+server {
+    
+    server_name {{ decidim_host }};
+    listen 80;
+
+    client_max_body_size 32M;
+
+    passenger_enabled on;
+
+    rails_env    production;
+    root         {{ decidim_app_directory }}/public;
+
+}

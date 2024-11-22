@@ -1,0 +1,68 @@
+- name: Decidim | Clone decidim-app repository
+  git:
+    repo: "{{ decidim_app_repository }}"
+    dest: "{{ decidim_app_directory }}"
+    version: "{{ repository_branch }}"
+
+- name: Decidim | Get ruby version
+  shell:
+    cmd: "cat {{ decidim_app_directory }}/.ruby-version"
+  register: ruby_version_result
+
+- name: Decidim | Install ruby version
+  shell:
+    cmd: "{{ decidim_home_path }}/.rbenv/bin/rbenv install -s {{ ruby_version_result.stdout }}"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Set ruby version
+  shell:
+    cmd: "{{ decidim_home_path }}/.rbenv/bin/rbenv global {{ ruby_version_result.stdout }}"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Get bundler version
+  shell:
+    cmd: "tail -n 1 {{ decidim_app_directory }}/Gemfile.lock | tr -d ' '"
+  register: bundler_version_result
+
+- name: Decidim | Install bundler gem
+  shell:
+    cmd: "{{ decidim_home_path }}/.rbenv/shims/gem install bundler:{{ bundler_version_result.stdout }}"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Run bundle install
+  bundler:
+    state: present
+    chdir: "{{ decidim_app_directory }}"
+    executable: "{{ decidim_home_path }}/.rbenv/versions/{{ ruby_version_result.stdout }}/bin/bundle"
+
+- name: Decidim | Create .env file
+  shell:
+    cmd: touch .env
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Init variables in .env file
+  template:
+    src: templates/env.j2
+    dest: "{{ decidim_app_directory }}/.env"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Decidim | Yarn install
+  shell:
+    cmd: "yarn install --frozen-lockfile"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Run migrations
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_home_path }}/.rbenv/shims/bundle exec rails db:migrate"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Precompile assets
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_home_path }}/.rbenv/shims/bundle exec rails tmp:cache:clear assets:precompile"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Precompile deface
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_home_path }}/.rbenv/shims/bundle exec rails deface:precompile"
+    chdir: "{{ decidim_app_directory }}"

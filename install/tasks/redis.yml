@@ -1,0 +1,25 @@
+- name: Redis | Install redis
+  dnf:
+    name: redis
+    state: latest
+  become: true
+
+- name: Redis | Set redis as a service
+  lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^supervised no'
+    line: supervised systemd
+  become: true
+
+- name: Redis | Start and enable redis service
+  ansible.builtin.systemd:
+    name: redis
+    state: started
+    enabled: yes
+  become: true
+
+- name: Redis | Restart redis
+  systemd:
+    name: redis
+    state: restarted
+  become: true

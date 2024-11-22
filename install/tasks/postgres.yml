@@ -1,0 +1,86 @@
+# DO NOT yet use this PGDG repo for latest PostgreSQL version because  of missing libpq-devel package
+# - name: Postgres | Install PGDG repo
+#   dnf:
+#     name: "https://download.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
+#     state: present
+#     disable_gpg_check: true
+#   become: true
+
+- name: Postgres | Install packages
+  dnf:
+    name:
+      - "postgresql"
+      - "postgresql-contrib"
+      - "postgresql-server"
+      - python3-psycopg2
+      - acl
+    # enablerepo: "pgdg{{ postgresql_version }}"
+    state: present
+  become: true
+
+- name: Postgres | Check if PostgreSQL is initialized
+  stat:
+    path: "{{ postgresql_data_dir }}/pg_hba.conf"
+  register: postgres_data
+  become: true
+
+- name: Postgres | Initialize PostgreSQL
+  shell:
+    cmd: postgresql-setup --initdb
+  become: true
+  when: not postgres_data.stat.exists
+
+- name: Postgres | Start and enable service
+  systemd:
+    name: postgresql
+    state: started
+    enabled: true
+  become: true
+
+- name: "Postgres | Create db user"
+  postgresql_user:
+    state: present
+    name: "{{ ansible_user }}"
+  become: true
+  become_user: postgres
+
+- name: "Postgres | Create app database"
+  postgresql_db:
+    state: present
+    name: "{{ database_name }}"
+    owner: "{{ ansible_user }}"
+  become: true
+  become_user: postgres
+
+- name: "Postgres | Install ltree extension"
+  postgresql_query:
+    db: "{{ database_name }}"
+    query: "create extension ltree;"
+  ignore_errors: true
+  become: true
+  become_user: postgres
+
+- name: "Postgres | Install pg_trgm extension"
+  postgresql_query:
+    db: "{{ database_name }}"
+    query: "create extension pg_trgm;"
+  ignore_errors: true
+  become: true
+  become_user: postgres
+
+- name: "Postgres | Allow local connection for the db user"
+  postgresql_pg_hba:
+    dest: "{{ postgresql_data_dir }}/pg_hba.conf"
+    contype: host
+    databases: all
+    method: trust
+    users: "{{ ansible_user }}"
+    create: true
+  become: true
+  become_user: postgres
+
+- name: "Postgres | Restart Postgres"
+  systemd:
+    state: restarted
+    name: postgresql
+  become: true

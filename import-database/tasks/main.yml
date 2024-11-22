@@ -1,0 +1,6 @@
+---
+# tasks file for bump_0.26
+- import_tasks: stop_services.yml
+- import_tasks: postgres.yml
+- import_tasks: decidim.yml
+- import_tasks: start_services.yml

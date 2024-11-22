@@ -1,0 +1,4 @@
+---
+# tasks file for bump_0.26
+- import_tasks: decidim.yml
+- import_tasks: post_installation.yml

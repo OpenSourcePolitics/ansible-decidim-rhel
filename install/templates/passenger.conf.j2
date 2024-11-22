@@ -1,0 +1,5 @@
+### Begin automatically installed Phusion Passenger config snippet ###
+passenger_root /usr/share/ruby/vendor_ruby/phusion_passenger/locations.ini;
+passenger_ruby {{ decidim_home_path }}/.rbenv/shims/ruby;
+passenger_instance_registry_dir /var/run/passenger-instreg;
+### End automatically installed Phusion Passenger config snippet ###

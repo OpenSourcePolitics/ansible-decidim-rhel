@@ -1,0 +1,11 @@
+- name: NGINX | Stop NGINX service
+  systemd:
+    state: stopped
+    name: nginx
+  become: true
+
+- name: Sidekiq | Stop sidekiq service
+  systemd:
+    state: stopped
+    name: sidekiq
+  become: true

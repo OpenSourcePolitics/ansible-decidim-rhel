@@ -1,0 +1,56 @@
+- name: Dependencies | Install Rbenv dependencies
+  dnf:
+    name: 
+      - git
+      - wget
+      - gcc
+      - bzip2
+      - openssl-devel
+      - libffi-devel
+      - readline-devel
+      - zlib-devel
+      - gdbm-devel
+      - ncurses-devel
+      - perl-core
+    enablerepo: crb
+    state: latest
+  become: true
+
+- name: Dependencies | Install Decidim dependencies
+  dnf:
+    name:
+      - libpq-devel
+      - libicu-devel
+    state: latest
+  become: true
+
+- name: Dependencies | Install 'Development tools' package group
+  yum:
+    name: "@Development Tools"
+    state: latest
+  become: true
+
+- name: Dependencies | Install EPEL repo
+  dnf:
+    name: 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm'
+    state: present
+    disable_gpg_check: true
+  become: true
+
+# - name: Print all available facts
+#   ansible.builtin.debug:
+#     var: ansible_distribution
+
+- name: Dependencies | Enable EPEL repo
+  shell:
+    cmd: ARCH=$( /bin/arch ) && subscription-manager repos --enable "codeready-builder-for-rhel-9-${ARCH}-rpms"
+  become: true
+  when: ansible_distribution == "RedHat"
+
+- name: Dependencies | Install ImageMagick
+  dnf:
+    name:
+      - ImageMagick 
+      - ImageMagick-devel
+    state: latest
+  become: true
