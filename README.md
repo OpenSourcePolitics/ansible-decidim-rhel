@@ -94,7 +94,7 @@ cp inventory-example.yml inventory.yml
 > - replace `< ssh_key_path >` with the path to the SSH key used to connect to the target server
 > - you can add the `-i my-custom-inventory.yml` if your Ansible inventory is not in the default `inventory.yml` file
 
-### `playbook-install.yml` : Decidim installation
+### • `playbook-install.yml` : Decidim installation
 ```shell
 ansible-playbook -u < ansible_user > --private-key=< ssh_key_path > playbook-install.yml
 ```
@@ -110,7 +110,7 @@ At the end of this playbook, your Decidim platform will be accessible at `https:
 (`decidim_host` is the variable set in your Ansible inventory)
 
 
-### `playbook-bump.yml` : Decidim basic update
+### • `playbook-bump.yml` : Decidim basic update
 ```shell
 ansible-playbook -u < ansible_user > --private-key=< ssh_key_path > playbook-bump.yml
 ```
@@ -122,7 +122,7 @@ This playbook will :
 - Restart all the services needed to run the platform
 
 
-### `playbook-import-database.yml` : Import exiting Postgres database
+### • `playbook-import-database.yml` : Import exiting Postgres database
 ```shell
 ansible-playbook -u < ansible_user > --private-key=< ssh_key_path > playbook-import-database.yml
 ```
@@ -139,8 +139,14 @@ This playbook will :
 - run the database migrations if needed
 - Restart all the services needed to run the platform
 
+#### Change the host of your imported organization(s)
+There is a good chance that the former hosts of the Decidim platform from which the data was exported are not (yet) pointing to your new target server where the data were just imported.
+In that case, Decidim will not show your imported organization and will redirect you to the "system" back office interface (`https://<decidim_host>/system`).  
 
-### `playbook-post-upgrade-0.27.yml` : Run additionnal scripts when upgrading to Decidim 0.27.x version
+You need to log into the "system" back office interface and change the host of your organization(s) for the one(s) that are pointing to your new target server. 
+
+
+### • `playbook-post-upgrade-0.27.yml` : Run additionnal scripts when upgrading to Decidim 0.27.x version
 ```shell
 ansible-playbook -u < ansible_user > --private-key=< ssh_key_path > playbook-post-upgrade-0.27.yml
 ```
@@ -152,3 +158,11 @@ This playbook will run all the additionnal scripts mentionned in the [Decidim 0.
 
 ## Useful commands
 
+> Type these commands in the Decidim installation directory
+
+### Create a new system administrator
+```shell
+RAILS_ENV=production bundle exec rails decidim_system:create_admin
+```
+You will be prompted for an email address and a password.  
+You can then go to `https://<decidim_host>/system/admins/sign_in` and log in with the new account.
