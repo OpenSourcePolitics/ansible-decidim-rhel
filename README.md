@@ -86,6 +86,8 @@ cp inventory-example.yml inventory.yml
 | `object_storage_endpoint_host` | `decidim.storage.opensourcepolitics.eu` | Decidim ENV variable : Object Storage (S3, Minio etc.) endpoint (used for the platform migration) |
 | `decidim_admin_email` | `administrator@email.com` | Email address of one Decidim administrator (used for the platform migration) |
 | `postgres_restore_file_path` | `/home/{{ ansible_user }}/postgres-database-dump.sql` | Absolute path of the database dump to be imported |
+| `ssl_certificate_path` | `/home/{{ ansible_user }}/ssl/fullchain.pem` | Absolute path for the custom SSL certificate in PEM format (see NGINX [documentation](https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_certificate)).  You need to have the full chain of trust in the same file (see NGINX [documentation](https://nginx.org/en/docs/http/configuring_https_servers.html#chains)). |
+| `ssl_certificate_key_path` | `/home/{{ ansible_user }}/ssl/privkey.pem` | Absolute path for the custom SSL certificate in PEM format (see NGINX [documentation](https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_certificate_key)). |
 
 ## Ansible Playbooks
 

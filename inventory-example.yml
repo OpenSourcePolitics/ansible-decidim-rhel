@@ -23,3 +23,5 @@ all:
         decidim_deployment_path: "/home/{{ ansible_user }}"
         decidim_admin_email: "admin@email.com"
         postgres_restore_file_path: "/home/{{ ansible_user }}/decidim_rhel8.sql"
+        ssl_certificate_path: "/home/{{ ansible_user }}/ssl/fullchain.pem"
+        ssl_certificate_key_path: "/home/{{ ansible_user }}/ssl/privkey.pem"
