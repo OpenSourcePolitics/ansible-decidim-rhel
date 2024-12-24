@@ -39,5 +39,5 @@
   systemd:
     state: restarted
     daemon_reload: yes
-    name: sidekiq
+    name: '{{ sidekiq_service }}'
   become: true

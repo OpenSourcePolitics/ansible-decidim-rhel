@@ -20,3 +20,4 @@ all:
         ssl_certificate_path: 
         ssl_certificate_key_path: 
         decidim_admin_email: 
+        sidekiq_service:
