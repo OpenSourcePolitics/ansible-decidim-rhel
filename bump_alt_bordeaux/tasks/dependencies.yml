@@ -1,6 +1,0 @@
-- name: Dependencies | Install Decidim dependencies
-  dnf:
-    name:
-      - mysql-devel
-    state: latest
-  become: true
