@@ -1,0 +1,74 @@
+- name: Dependencies | Install Rbenv dependencies
+  dnf:
+    enablerepo: [devel]
+    name: 
+      - git
+      - wget
+      - gcc
+      - bzip2
+      - perl
+      - openssl-devel
+      - libffi-devel
+      - readline-devel
+      - zlib-devel
+      - gdbm-devel
+      - ncurses-devel
+    state: latest
+  become: true
+
+- name: Dependencies | Install Decidim Core dependencies
+  dnf:
+    enablerepo: [devel]
+    name:
+      - libpq-devel
+      - libicu-devel
+      - "@postgresql/client"
+    state: latest
+  become: true
+
+- name: Dependencies | Install 'Development tools' package group
+  yum:
+    name: "@Development Tools"
+    state: latest
+  become: true
+
+- name: Dependencies | Install EPEL repo
+  dnf:
+    name: 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm'
+    state: present
+    disable_gpg_check: true
+  become: true
+
+- name: Dependencies | Get archirecture type
+  shell:
+    cmd: "/bin/arch"
+  register: system_arch
+  become: true
+
+- name: Dependencies | Install ImageMagick
+  dnf:
+    enablerepo: ["codeready-builder-for-rhel-9-{{ system_arch.stdout }}-rpms"]
+    name:
+      - ImageMagick 
+      - ImageMagick-devel
+    state: latest
+  become: true
+
+- name: Dependencies | Install Decidim Map dependencies
+  dnf:
+    name:
+      - proj
+      - proj-devel
+      - p7zip
+      - geos
+      - geos-devel
+    state: latest
+  become: true
+
+- name: Dependencies | Install wkhtmltopdf from GitHub
+  dnf:
+    disable_gpg_check: true
+    name:
+      - "https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox-0.12.6.1-2.almalinux9.{{ system_arch.stdout }}.rpm"
+    state: latest
+  become: true

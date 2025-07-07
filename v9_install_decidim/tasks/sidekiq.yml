@@ -1,0 +1,33 @@
+- name: Sidekiq | Create sidekiq.service file
+  ansible.builtin.file:
+    path: "/etc/systemd/system/sidekiq.service"
+    state: touch
+  become: true
+
+- name: Sidekiq | Create sidekiq log directory
+  ansible.builtin.file:
+    path: "/var/log/sidekiq"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+  become: true
+
+- name: Sidekiq | Set sidekiq config
+  template:
+    src: templates/sidekiq.j2
+    dest: "/etc/systemd/system/sidekiq.service" 
+  become: true
+
+- name: Sidekiq | Start and enable sidekiq service
+  ansible.builtin.systemd:
+    name: sidekiq
+    state: started
+    enabled: yes
+  become: true
+
+- name: Sidekiq | Restart sidekiq
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: sidekiq
+  become: true

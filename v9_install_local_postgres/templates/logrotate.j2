@@ -1,0 +1,10 @@
+{{ decidim_app_directory }}/log/*.log {
+  daily
+  missingok
+  rotate 7
+  size 500M
+  compress
+  delaycompress
+  notifempty
+  copytruncate
+}

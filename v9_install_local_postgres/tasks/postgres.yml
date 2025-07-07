@@ -1,0 +1,80 @@
+- name: Postgres | Install packages
+  dnf:
+    name:
+      - postgresql
+      - postgresql-server
+      - postgresql-contrib
+      - python3-psycopg2
+      - acl
+    state: present
+  become: true
+
+- name: Postgres | Check if PostgreSQL is initialized
+  stat:
+    path: "{{ postgresql_data_dir }}/pg_hba.conf"
+  register: postgres_data
+  become: true
+
+- name: Postgres | Start and enable service
+  service:
+    name: postgresql
+    state: started
+    enabled: true
+  become: true
+
+- name: "Postgres | Create app database"
+  postgresql_db:
+    state: present
+    name: "{{ database_name }}"
+  become: true
+  become_user: postgres
+
+- name: "Postgres | Install ltree extension"
+  postgresql_query:
+    db: "{{ database_name }}"
+    query: "create extension ltree;"
+  ignore_errors: true
+  become: true
+  become_user: postgres
+
+- name: "Postgres | Install pg_trgm extension"
+  postgresql_query:
+    db: "{{ database_name }}"
+    query: "create extension pg_trgm;"
+  ignore_errors: true
+  become: true
+  become_user: postgres
+
+- name: "Postgres | Create db user"
+  postgresql_user:
+    state: present
+    name: "{{ ansible_user }}"
+  become: true
+  become_user: postgres
+
+- name: "Postgres | Grant db user access to app db"
+  postgresql_privs:
+    type: database
+    database: "{{ database_name }}"
+    roles: "{{ ansible_user }}"
+    grant_option: no
+    privs: all
+  become: true
+  become_user: postgres
+
+- name: "Postgres | Allow local connection for the db user"
+  postgresql_pg_hba:
+    dest: "/var/lib/pgsql/data/pg_hba.conf"
+    contype: host
+    databases: all
+    method: trust
+    users: "{{ ansible_user }}"
+    create: true
+  become: true
+  become_user: postgres
+
+- name: "Postgres | Restart Postgres"
+  systemd:
+    state: restarted
+    name: postgresql
+  become: true

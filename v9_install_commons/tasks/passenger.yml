@@ -1,0 +1,33 @@
+- name: Passenger | Download Passenger repo
+  shell:
+    cmd: curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
+  become: true
+
+- name: Passenger | Install Passenger
+  yum:
+    name: nginx-mod-http-passenger
+    state: latest
+  become: true
+
+- name: Passenger | Create passenger_temp folder
+  ansible.builtin.file:
+    path: /usr/share/nginx/passenger_temp
+    owner: nginx
+    group: root
+    state: directory
+  become: true
+
+- name: Passenger | Set mod-http-passenger config
+  template:
+    src: templates/passenger.conf.j2
+    dest: "/etc/nginx/conf.d/passenger.conf"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0664"
+  become: true
+
+- name: Passenger | Restart Nginx
+  systemd:
+    state: restarted
+    name: nginx
+  become: true

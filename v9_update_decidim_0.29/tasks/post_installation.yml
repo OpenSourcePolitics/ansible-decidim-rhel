@@ -1,0 +1,43 @@
+- name: Decidim | Initialize default content blocks
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:content_blocks:initialize_default_content_blocks"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Clean deleted users extra informations
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rake decidim:upgrade:clean:clean_deleted_users"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Set categories for proposals
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rake decidim_proposals:upgrade:set_categories"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Attachments cleanup
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rake decidim:upgrade:attachments_cleanup"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Fix nickname casing
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rake decidim:upgrade:fix_nickname_casing"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Clean invalid records for hidden resources
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rake decidim:upgrade:clean:hidden_resources"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: NGINX | Restart NGINX
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: nginx
+  become: true
+
+- name: Sidekiq | Restart sidekiq
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: '{{ sidekiq_service }}'
+  become: true

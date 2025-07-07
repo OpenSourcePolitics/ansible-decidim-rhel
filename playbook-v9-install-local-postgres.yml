@@ -1,0 +1,12 @@
+- hosts: all
+  gather_facts: false    
+
+  vars:
+    decidim_app_repository: "{{ git_root }}/{{ git_organization }}/{{ git_repository }}"
+    decidim_app_directory: "{{ decidim_deployment_path }}/{{ app_repository }}"
+    postgresql_version: "15"
+    postgresql_bin_path: "/usr/lib/postgresql/{{ postgresql_version }}/bin"
+    postgresql_data_dir: "/var/lib/postgresql/{{ postgresql_version }}/main"
+
+  roles:
+    - v9_install_local_postgres
