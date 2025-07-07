@@ -1,7 +1,7 @@
 - name: Nginx | Set vhost config
   template:
     src: templates/nginx.j2
-    dest: "/etc/nginx/conf.d/decidim--#{{ decidim_host }}.conf"
+    dest: "/etc/nginx/conf.d/decidim--{{ decidim_host }}.conf"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: "0664"

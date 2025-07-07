@@ -9,6 +9,11 @@
     state: present
   become: true
 
+- name: Postgres | Init PostgreSQL
+  shell:
+    cmd: postgresql-setup --initdb
+  become: true
+
 - name: Postgres | Check if PostgreSQL is initialized
   stat:
     path: "{{ postgresql_data_dir }}/pg_hba.conf"
