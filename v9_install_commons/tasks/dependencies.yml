@@ -8,6 +8,7 @@
       - bzip2
       - perl
       - openssl-devel
+      - libyaml-devel
       - libffi-devel
       - readline-devel
       - zlib-devel
