@@ -11,4 +11,4 @@
 
 - name: Yarn | Source .bashrc
   shell: 
-    cmd: . {{ decidim_deployment_path }}/.bashrc
+    cmd: . {{ decidim_home_path }}/.bashrc
