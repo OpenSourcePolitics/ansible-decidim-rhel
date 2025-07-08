@@ -3,13 +3,19 @@
     repo: "https://github.com/rbenv/rbenv.git"
     dest: "{{ decidim_deployment_path }}/.rbenv"
 
-- name: Rbenv | Set rbenv config 1/2
+- name: Rbenv | Set rbenv config 1/3
+  lineinfile:
+    path: "{{ decidim_home_path }}/.bashrc"
+    line: export RBENV_ROOT="{{ decidim_deployment_path }}/.rbenv"
+    state: present
+
+- name: Rbenv | Set rbenv config 2/3
   lineinfile:
     path: "{{ decidim_home_path }}/.bashrc"
     line: export PATH="{{ decidim_deployment_path }}/.rbenv/bin:$PATH"
     state: present
 
-- name: Rbenv | Set rbenv config 2/2
+- name: Rbenv | Set rbenv config 3/3
   lineinfile:
     path: "{{ decidim_home_path }}/.bashrc"
     line: eval "$(rbenv init -)"
