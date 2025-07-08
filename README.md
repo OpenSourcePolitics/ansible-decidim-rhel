@@ -16,6 +16,7 @@
 - **database_password** : Mot de passe de l'utilisateur avec acces à la base de donnée (vide par défaut)
 - **secret_key_base:** : La secret key base utilisée avec l'archive de données PostgreSQL importée
 - **decidim_deployment_path** : Chemin d'installation pour l'environnement Ruby on Rails et la stack Decidim
+- **decidim_home_path** : Chemin du HOME du user
 - **ssl_certificate_path** : Chemin vers le certificat SSL pour la configuration Nginx
 - **ssl_certificate_key_path** : Chemin vers la clé du certificat SSL pour la configuration Nginx
 - **decidim_admin_email** : addresse email d'un administrateur de la plateforme, **il doit exister sur chacune des organisations existantes** 
@@ -69,6 +70,7 @@ où :
             database_password:
             secret_key_base:
             decidim_deployment_path: 
+            decidim_home_path:
             ssl_certificate_path: 
             ssl_certificate_key_path: 
             decidim_admin_email: 
