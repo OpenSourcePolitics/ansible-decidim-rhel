@@ -1,5 +1,5 @@
 [Unit]
-Description=sidekiq
+Description={{ sidekiq_service }}
 # start us only once the network and logging subsystems are available,
 # consider adding redis-server.service if Redis is local and systemd-managed.
 After=syslog.target network.target

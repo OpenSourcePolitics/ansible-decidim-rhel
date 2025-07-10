@@ -1,6 +1,6 @@
 - name: Sidekiq | Create sidekiq.service file
   ansible.builtin.file:
-    path: "/etc/systemd/system/sidekiq--{{ decidim_host }}.service"
+    path: "/etc/systemd/system/{{ sidekiq_service }}.service"
     state: touch
   become: true
 
@@ -15,12 +15,12 @@
 - name: Sidekiq | Set sidekiq config
   template:
     src: templates/sidekiq.j2
-    dest: "/etc/systemd/system/sidekiq--{{ decidim_host }}.service" 
+    dest: "/etc/systemd/system/{{ sidekiq_service }}.service" 
   become: true
 
 - name: Sidekiq | Start and enable sidekiq service
   ansible.builtin.systemd:
-    name: "sidekiq--{{ decidim_host }}"
+    name: "{{ sidekiq_service }}"
     state: started
     enabled: yes
   become: true
@@ -29,5 +29,5 @@
   systemd:
     state: restarted
     daemon_reload: yes
-    name: "sidekiq--{{ decidim_host }}"
+    name: "{{ sidekiq_service }}"
   become: true

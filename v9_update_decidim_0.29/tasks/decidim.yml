@@ -35,17 +35,22 @@
     chdir: "{{ decidim_app_directory }}"
     executable: "{{ decidim_deployment_path }}/.rbenv/versions/{{ ruby_version_result.stdout }}/bin/bundle"
 
-- name: Decidim | Yarn install
-  shell:
-    cmd: "yarn install --frozen-lockfile"
-    chdir: "{{ decidim_app_directory }}"
+# - name: Decidim | Yarn install
+#   shell:
+#     cmd: "yarn install --frozen-lockfile --non-interactive"
+#     chdir: "{{ decidim_app_directory }}"
 
 - name: Decidim | Run migrations
   shell:
     cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails migrate:db:force"
     chdir: "{{ decidim_app_directory }}"
 
+- name: Decidim | Install webpacker
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:webpacker:install"
+    chdir: "{{ decidim_app_directory }}"
+
 - name: Decidim | Precompile assets
   shell:
-    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails tmp:cache:clear assets:precompile"
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails tmp:cache:clear assets:precompile shakapacker:compile"
     chdir: "{{ decidim_app_directory }}"
