@@ -25,7 +25,12 @@
 
 - name: Decidim | Clean invalid records for hidden resources
   shell:
-    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rake decidim:upgrade:clean:hidden_resources"
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:clean:searchable_resources"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Clean invalid action logs
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:clean:action_logs"
     chdir: "{{ decidim_app_directory }}"
 
 - name: NGINX | Restart NGINX
