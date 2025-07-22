@@ -54,3 +54,8 @@
   shell:
     cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails tmp:cache:clear assets:precompile shakapacker:compile"
     chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Deface precompile
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails deface:precompile"
+    chdir: "{{ decidim_app_directory }}"
