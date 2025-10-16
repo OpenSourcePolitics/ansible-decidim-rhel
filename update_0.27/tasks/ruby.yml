@@ -1,3 +1,0 @@
-- name: Ruby | Update ruby-build
-  shell: 
-    cmd: "git -C {{ decidim_deployment_path }}/.rbenv/plugins/ruby-build pull"

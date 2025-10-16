@@ -1,5 +1,0 @@
----
-# tasks file for bump_0.26
-- import_tasks: update_runtime.yml
-- import_tasks: decidim.yml
-- import_tasks: post_installation.yml

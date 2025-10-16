@@ -20,103 +20,75 @@
 - **ssl_certificate_path** : Chemin vers le certificat SSL pour la configuration Nginx
 - **ssl_certificate_key_path** : Chemin vers la clé du certificat SSL pour la configuration Nginx
 - **decidim_admin_email** : addresse email d'un administrateur de la plateforme, **il doit exister sur chacune des organisations existantes** 
+- **sidekiq_service** : nom du service sidekiq qui sera déployé
 
 ## Usage
 
 ```
-ansible-playbook -u sudoer --private-key="~/path/to/ssh-key" -i inventory.yml playbook.yml
+ansible-playbook -u sudoer --private-key="~/path/to/ssh-key" -i inventory.yml playbook-xxx.yml
 ```
 où : 
 - _sudoer_ est l'utilisateur distant qui executera le contenu du playbook
 - _~/path/to/ssh-key_ est le chemin local de la clé SSH autorisée sur le serveur distant
 - _inventory.yml_ est vore fichier local d'inventaire
-- _playbook.yml_ est le playbook à exécuter
+- _playbook-xxx.yml_ est le playbook à exécuter
 
 ## Playbook disponibles
-- playbook.yml : installation complête de Decidim sur un serveur RHEL8 
-- playbook-update-0.26.yml : mise à jour majeure d'un decidim existant (< 0.26)
-- playbook-bump-0.26.yml : mise à jour mineure d'un decidim existant (~ 0.26.x)
-- playbook-update-0.27.yml : mise à jour majeure d'un decidim existant (~ 0.26)
-- playbook-bump-0.27.yml : mise à jour mineure d'un decidim existant (~ 0.27.x)
+### playbook-v9-install-commons.yml : installation des dépendances système globales
+Ce playbook est à utiliser pour configurer un nouveau serveur ou vérifier que toutes les dépendances sont présentes et à jour. 
+- paquets système
+- memcached
+- rbenv
+- ruby
+- nodejs
+- yarn
+- nginx
+- passenger
+- redis
 
+### playbook-v9-certbot.yml : création d'un certificat SSL Let's Encrypt
+Ce playbook permet la création d'un certificat SSL Let's Encrypt rattaché au nom de domaine sur lequel sera déployé la plateforme. 
+Cette étape est optionnelle si vous voulez fournir votre propre certificat SSL. 
 
-## Installation de Decidim avec import de données existante
-
-### Pré-requis
-- Avoir a disposition un serveur PostgreSQL avec :
-    - Un utilisateur PostgreSQL avec password
-    - Une base de donnée vide et donner les droits d'acces à l'utilisateur précedemment créé
-    - Restaurer un export de la base de donnée sur la nouvelle  
-      `pg_restore -d "<database-name>" --no-owner --role=<database-user> -c <dump-file>`
-- Sur le serveur à provisionner (Decidim) :
-    - Créer un utilisateur dédié à la gestion de la stack Decidim
-    - Ajouter cet utilisateur au groupe sudoers
-- Sur votre serveur Ansible
-    - Cloner le dépot contenant le role Ansible pour le provisionnement de Decidim
-    - Ajouter le serveur à provisionner dans votre inventaire Ansible (**inventory.yml**) en remplissant les variables suivantes avant d'exécuter le playbook
-        ```
-        decidim-server:
-            ansible_host:
-            git_organization:
-            git_root:
-            git_repository:
-            repository_branch:
-            decidim_host:
-            certbot_email_address:
-            database_host:
-            database_port:
-            database_name:
-            database_username:
-            database_password:
-            secret_key_base:
-            decidim_deployment_path: 
-            decidim_home_path:
-            ssl_certificate_path: 
-            ssl_certificate_key_path: 
-            decidim_admin_email: 
-        ```
-
-### Lancer le playbook d'installation
-
-Une fois les pré-requis en place, lancer la commande suivante depuis de le répertoire Ansible pour lancer le déploiement du role Ansible sur le serveur à provisionner
+Le chemin du certificat doit être ensuite renseigné dans les variables d'inventaire `ssl_certificate_path` et `ssl_certificate_key_path`.
+Dans le cas le Let's Encrypt / Certbot, les fichiers de certificat se trouvent par défaut à l'emplacement suivant : 
 ```
-ansible-playbook -u decidim --private-key="~/path/to/ssh-key" -i inventory.yml playbook.yml
+ssl_certificate_path: "/etc/letsencrypt/live/<votre-nom-de-domaine>/fullchain.pem"
+ssl_certificate_key_path: "/etc/letsencrypt/live/<votre-nom-de-domaine>/privkey.pem"
 ```
 
-### Résultat attendu
+### playbook-v9-install-local-postgres.yml : installation et configuration d'un serveur PostgreSQL en local sur le serveur
+Ce playbook installe un serveur de base de données PostgrSQL en local sur le serveur. 
+Une base de données vide est aussi créée avec les permissions accordées à l'utilisateur courant (`ansible_user`).  
 
-Apres exécution du playbook sur le serveur cible, celui-ci devrait avoir :
+Cette étape est optionnelle si vous voulez utiliser une base de données externe.
+Dans le cas d'un import de données d'une plateforme Decidim existante, cette étape devra être faite manuellement **avant** l'installation de Decidim. 
+Il faudra alors remplir les variables d'inventaire :  
+- `database_host`
+- `database_port`
+- `database_name`
+- `database_username`
+- `database_password`
 
-- Installer les dépendances liées à Ruby on Rails et Decidim
-- Désactiver SELinux
-- Installer le service Memcached
-- Installer Rbenv, gestionnaire de versions Ruby
-- Installer le dépot de code de Ruby
-- Installer la derniere version stable de NodeJS
-- Installer la derniere version stable de Yarn
-- Compléter l'ensemble des étapes liées au bon fonctionnement de Decidim, à savoir : 
-    - Téléchargement du dépot de code dans le répertoire créé à partir de la variable d'inventaire **git_repository**
-    - Installation de la version de Ruby correspondant à celle spécifiée par le dépot de code de la decidim-app
-    - Installation de la version de Bundler correspondant à celle spécifiée par le dépot de code de la decidim-app
-    - Installation des gems liées à Decidim (présentes dans le fichier **Gemfile**)
-    - Création d'un fichier **.env** contenant les variables d'environnement nécéssaires au bon fonctionnement de l'application et renseignées en amont dans le fichier **inventory.yml**
-    - Installation des migrations Rails
-    - Précompilation des assets statiques de l'application (CSS et JS)
-- Configurer un logrotate pour les logs génerés par Decidim
-- Installer Nginx et configurer le sous-domaine d'accès pour Decidim (variable d'inventaire **decidim_host**)
-- Installer et configurer Phusion Passenger pour l'application Decidim
-- Configurer Sidekiq pour le traitement des taches asynchrones executées par l'application Decidim
-- Installer Redis
-- Installer Certbot avec création d'un certificat SSL Let's Encrypt pour le sous-domaine d'accès pour Decidim (variable d'inventaire **decidim_host**)
+### playbook-v9-install-decidim.yml : installation de Decidim
+Ce playbook installe Decidim sur votre serveur :  
+- récupération du code
+- installation de la bonne version de ruby si nécessaire
+- récupération des dépendances logicielles 
+- configuration du [fichier de variables d'environnement](v9_install_decidim/templates/env.j2)
+- lancement des migrations de données si nécessaire (y compris pour une nouvelle installation)
+- précompilation des assets JS et CSS
 
-### Finalisation
+### playbook-v9-update-decidim-0.29.yml : Mise à jour d'une version de Decidim avant la 0.29
+Ce playbook est a utiliser dans le cas d'une montée de version sur un Decidim antérieur à la version 0.29
 
-Extraire l'archive des fichiers uploadés dans le dossier de l'application Decidim qui correspond à 
-```
-/home/{{ ansible_user }}/{{ git_repository }}/public/uploads
-```
+### playbook-v9-bump-decidim-0.29.yml : Mise à jour classique d'un Decidim en version 0.29
+Ce playbook est a utiliser dans le cas d'une montée de version classique sur Decidim en version 0.29
 
-exemple : 
-```
-tar -jxvf /path/to/archive /home/decidim/decidim-app/public/uploads
-```
+## Import de données existantes
+Dans le cas où vous importer des données d'une plateforme Decidim existante il faudra effectuer les opérations manuelles suivantes :  
+- S'assurer que vous disposez bien des accès administrateur de la plateforme pour l'interface d'admnistration (`/admin`) et système (`/system`)
+- Récupérer l'ancien fichier .env de votre ancienne instalation de Decidim pour le copier sur votre serveur dans le dossier d'installation (`<decidim_deployment_path>/<app_repository>`) et notamment la variable d'environnement `SECRET_KEY_BASE`
+- Restaurer un export de la base de donnée sur la nouvelle base qui sera utilisée
+  `pg_restore -d "<database-name>" --no-owner --role=<database-user> -c <dump-file>`
+- Transférer les fichiers du dossier `/storage` de votre ancienne instalation de Decidim pour les copier sur votre serveur dans le dossier d'installation (`<decidim_deployment_path>/<app_repository>`)

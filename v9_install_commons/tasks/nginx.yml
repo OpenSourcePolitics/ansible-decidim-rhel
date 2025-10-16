@@ -1,6 +1,6 @@
 - name: Nginx | Install Nginx
   dnf:
-    name: "@nginx:1.24"
+    name: "@nginx:1.26"
     state: present
   become: true
 

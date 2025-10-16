@@ -1,3 +1,14 @@
+- name: Decidim | Check if decidim-app directory exists
+  stat:
+    path: "{{ decidim_app_directory }}"
+  register: decidim_app_directory_reg
+
+- name: Decidim | Clean decidim-app directory for modified packages manifest
+  shell:
+    cmd: "git checkout HEAD package*"
+    chdir: "{{ decidim_app_directory }}"
+  when: decidim_app_directory_reg.stat.exists and decidim_app_directory_reg.stat.isdir
+
 - name: Decidim | Clone decidim-app repository
   git:
     repo: "{{ decidim_app_repository }}"
@@ -51,6 +62,11 @@
 #   shell:
 #     cmd: "yarn install --frozen-lockfile --non-interactive"
 #     chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim | Create schema_migrations table if not exists
+  shell:
+    cmd: RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails runner "ActiveRecord::Base.connection.execute('CREATE TABLE IF NOT EXISTS public.schema_migrations ( version character varying COLLATE pg_catalog.\"default\" NOT NULL )')"
+    chdir: "{{ decidim_app_directory }}"
 
 - name: Decidim | Run migrations
   shell:

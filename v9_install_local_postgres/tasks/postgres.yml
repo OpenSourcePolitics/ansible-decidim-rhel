@@ -13,6 +13,7 @@
   shell:
     cmd: postgresql-setup --initdb
   become: true
+  ignore_errors: true
 
 - name: Postgres | Check if PostgreSQL is initialized
   stat:
