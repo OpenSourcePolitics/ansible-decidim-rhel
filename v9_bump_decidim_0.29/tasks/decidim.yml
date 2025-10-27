@@ -56,10 +56,10 @@
     cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails migrate:db:force"
     chdir: "{{ decidim_app_directory }}"
 
-- name: Decidim | Install webpacker
-  shell:
-    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:webpacker:install"
-    chdir: "{{ decidim_app_directory }}"
+# - name: Decidim | Install webpacker
+#   shell:
+#     cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:webpacker:install"
+#     chdir: "{{ decidim_app_directory }}"
 
 - name: Decidim | Precompile assets
   shell:
