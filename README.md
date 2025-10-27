@@ -1,4 +1,4 @@
-# Playbook Ansible pour Decidim sur RHEL 8
+# Playbook Ansible pour Decidim sur RHEL / CentOS / Rocky linux en version 9
 
 ## Variables d'inventaire ansible
 *Se référer au fichier **inventory-example.yml** pour les exemples*
@@ -33,8 +33,8 @@ où :
 - _inventory.yml_ est vore fichier local d'inventaire
 - _playbook-xxx.yml_ est le playbook à exécuter
 
-## Playbook disponibles
-### playbook-v9-install-commons.yml : installation des dépendances système globales
+## 📚 Playbook disponibles
+### 📒 playbook-v9-install-commons.yml : installation des dépendances système globales
 Ce playbook est à utiliser pour configurer un nouveau serveur ou vérifier que toutes les dépendances sont présentes et à jour. 
 - paquets système
 - memcached
@@ -46,7 +46,7 @@ Ce playbook est à utiliser pour configurer un nouveau serveur ou vérifier que 
 - passenger
 - redis
 
-### playbook-v9-certbot.yml : création d'un certificat SSL Let's Encrypt
+### 📒 playbook-v9-certbot.yml : création d'un certificat SSL Let's Encrypt
 Ce playbook permet la création d'un certificat SSL Let's Encrypt rattaché au nom de domaine sur lequel sera déployé la plateforme. 
 Cette étape est optionnelle si vous voulez fournir votre propre certificat SSL. 
 
@@ -57,7 +57,7 @@ ssl_certificate_path: "/etc/letsencrypt/live/<votre-nom-de-domaine>/fullchain.pe
 ssl_certificate_key_path: "/etc/letsencrypt/live/<votre-nom-de-domaine>/privkey.pem"
 ```
 
-### playbook-v9-install-local-postgres.yml : installation et configuration d'un serveur PostgreSQL en local sur le serveur
+### 📒 playbook-v9-install-local-postgres.yml : installation et configuration d'un serveur PostgreSQL en local sur le serveur
 Ce playbook installe un serveur de base de données PostgrSQL en local sur le serveur. 
 Une base de données vide est aussi créée avec les permissions accordées à l'utilisateur courant (`ansible_user`).  
 
@@ -70,7 +70,7 @@ Il faudra alors remplir les variables d'inventaire :
 - `database_username`
 - `database_password`
 
-### playbook-v9-install-decidim.yml : installation de Decidim
+### 📒 playbook-v9-install-decidim.yml : installation de Decidim
 Ce playbook installe Decidim sur votre serveur :  
 - récupération du code
 - installation de la bonne version de ruby si nécessaire
@@ -79,10 +79,10 @@ Ce playbook installe Decidim sur votre serveur :
 - lancement des migrations de données si nécessaire (y compris pour une nouvelle installation)
 - précompilation des assets JS et CSS
 
-### playbook-v9-update-decidim-0.29.yml : Mise à jour d'une version de Decidim avant la 0.29
+### 📒 playbook-v9-update-decidim-0.29.yml : Mise à jour d'une version de Decidim avant la 0.29
 Ce playbook est a utiliser dans le cas d'une montée de version sur un Decidim antérieur à la version 0.29
 
-### playbook-v9-bump-decidim-0.29.yml : Mise à jour classique d'un Decidim en version 0.29
+### 📒 playbook-v9-bump-decidim-0.29.yml : Mise à jour classique d'un Decidim en version 0.29
 Ce playbook est a utiliser dans le cas d'une montée de version classique sur Decidim en version 0.29
 
 ## Import de données existantes
