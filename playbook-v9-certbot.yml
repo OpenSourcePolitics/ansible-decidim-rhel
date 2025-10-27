@@ -1,0 +1,19 @@
+- hosts: all
+  gather_facts: false    
+
+  tasks:
+    - name: Certbot | Install packages
+      dnf:
+        name:
+        - certbot
+        - python3-certbot-nginx
+        state: latest
+      become: true
+
+    - name: Certbot | Create SSL certificate
+      shell: 
+        cmd: "certbot certonly --standalone --agree-tos --noninteractive
+                          -d {{ decidim_host }}
+                          -m  {{ certbot_email_address }} 
+                          --redirect"
+      become: true
