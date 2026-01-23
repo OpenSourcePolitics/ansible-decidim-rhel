@@ -55,16 +55,16 @@
     state: latest
   become: true
 
-- name: Dependencies | Install Decidim Map dependencies
-  dnf:
-    name:
-      - proj
-      - proj-devel
-      - p7zip
-      - geos
-      - geos-devel
-    state: latest
-  become: true
+# - name: Dependencies | Install Decidim Map dependencies
+#   dnf:
+#     name:
+#       - proj
+#       - proj-devel
+#       - p7zip
+#       - geos
+#       - geos-devel
+#     state: latest
+#   become: true
 
 - name: Dependencies | Install wkhtmltopdf from GitHub
   dnf:

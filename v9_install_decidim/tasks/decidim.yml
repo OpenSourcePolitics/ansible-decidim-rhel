@@ -5,7 +5,7 @@
 
 - name: Decidim | Clean decidim-app directory for modified packages manifest
   shell:
-    cmd: "git checkout HEAD package*"
+    cmd: "git checkout HEAD package* yarn.lock"
     chdir: "{{ decidim_app_directory }}"
   when: decidim_app_directory_reg.stat.exists and decidim_app_directory_reg.stat.isdir
 
@@ -58,10 +58,10 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
-# - name: Decidim | Yarn install
-#   shell:
-#     cmd: "yarn install --frozen-lockfile --non-interactive"
-#     chdir: "{{ decidim_app_directory }}"
+- name: Decidim | Yarn install
+  shell:
+    cmd: "yarn install --frozen-lockfile --non-interactive"
+    chdir: "{{ decidim_app_directory }}"
 
 - name: Decidim | Create schema_migrations table if not exists
   shell:
@@ -70,17 +70,17 @@
 
 - name: Decidim | Run migrations
   shell:
-    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails migrate:db:force"
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails db:migrate"
     chdir: "{{ decidim_app_directory }}"
 
-- name: Decidim | Install webpacker
-  shell:
-    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:webpacker:install"
-    chdir: "{{ decidim_app_directory }}"
+# - name: Decidim | Install webpacker
+#   shell:
+#     cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:webpacker:install"
+#     chdir: "{{ decidim_app_directory }}"
 
 - name: Decidim | Precompile assets
   shell:
-    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails tmp:cache:clear assets:precompile shakapacker:compile"
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails tmp:cache:clear assets:precompile"
     chdir: "{{ decidim_app_directory }}"
 
 - name: Decidim | Deface precompile
