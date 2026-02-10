@@ -1,36 +1,76 @@
-- name: Decidim | Initialize default content blocks
+- name: Decidim post installation tasks for 0.29 | Delay admin password update
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails runner \"Decidim::User.where(admin:true).update_all(password_updated_at: Time.now)\""
+    chdir: "{{ decidim_app_directory }}"
+   
+- name: Decidim post installation tasks for 0.29 | Fix nickname casing
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:fix_nickname_casing"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim post installation tasks for 0.29 | Migrate WYSIWYG content
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:migrate_wysiwyg_content"
+    chdir: "{{ decidim_app_directory }}"
+   
+- name: Decidim post installation tasks for 0.29 | Fix blocked user panel in moderation
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:moderation:fix_blocked_user_panel"
+    chdir: "{{ decidim_app_directory }}"
+   
+- name: Decidim post installation tasks for 0.29 | Set categories for proposals
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim_proposals:upgrade:set_categories"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim post installation tasks for 0.29 | Fix duplicate endorsements
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:fix_duplicate_endorsements"
+    chdir: "{{ decidim_app_directory }}"
+   
+- name: Decidim post installation tasks for 0.29 | Fix short urls
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:fix_short_urls"
+    chdir: "{{ decidim_app_directory }}"
+   
+- name: Decidim post installation tasks for 0.29 | Initialize default content blocks
   shell:
     cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:content_blocks:initialize_default_content_blocks"
     chdir: "{{ decidim_app_directory }}"
 
-- name: Decidim | Clean deleted users extra informations
+- name: Decidim post installation tasks for 0.29 | Clean deleted users extra informations
   shell:
-    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rake decidim:upgrade:clean:clean_deleted_users"
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:clean:clean_deleted_users"
     chdir: "{{ decidim_app_directory }}"
 
-- name: Decidim | Set categories for proposals
+- name: Decidim post installation tasks for 0.29 | Attachments cleanup
   shell:
-    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rake decidim_proposals:upgrade:set_categories"
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:attachments_cleanup"
     chdir: "{{ decidim_app_directory }}"
 
-- name: Decidim | Attachments cleanup
+- name: Decidim post installation tasks for 0.29 | Clean invalid action logs
   shell:
-    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rake decidim:upgrade:attachments_cleanup"
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:clean:follows"
     chdir: "{{ decidim_app_directory }}"
 
-- name: Decidim | Fix nickname casing
+- name: Decidim post installation tasks for 0.29 | Clean invalid action logs
   shell:
-    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rake decidim:upgrade:fix_nickname_casing"
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:clean:notifications"
     chdir: "{{ decidim_app_directory }}"
 
-- name: Decidim | Clean invalid records for hidden resources
+- name: Decidim post installation tasks for 0.29 | Clean invalid action logs
+  shell:
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:clean:action_logs"
+    chdir: "{{ decidim_app_directory }}"
+
+- name: Decidim post installation tasks for 0.29 | Clean invalid records for hidden resources
   shell:
     cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:clean:searchable_resources"
     chdir: "{{ decidim_app_directory }}"
 
-- name: Decidim | Clean invalid action logs
+- name: Decidim post installation tasks for 0.29 | Clean invalid records for hidden resources
   shell:
-    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:clean:action_logs"
+    cmd: "RAILS_ENV=production {{ decidim_deployment_path }}/.rbenv/shims/bundle exec rails decidim:upgrade:clean:hidden_resources"
     chdir: "{{ decidim_app_directory }}"
 
 - name: NGINX | Restart NGINX

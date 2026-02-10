@@ -1,0 +1,17 @@
+- name: NodeJS | Remove old NodeJS
+  dnf:
+    name: nodejs
+    state: absent
+  become: true
+
+- name: NodeJS | Download NodeJS
+  shell:
+    cmd: curl -sL https://rpm.nodesource.com/setup_22.x | bash -
+  become: true
+
+- name: NodeJS | Install NodeJS
+  dnf:
+    name: nodejs
+    state: present
+    allowerasing: true
+  become: true
